@@ -139,30 +139,38 @@ function backupWHMCS_output($vars)
         echo '<tr>';
 
         echo '<td class="text-center">';
-        echo str_replace('_'," ",substr($item->backup_name,0,-4 ));
+        echo str_replace('_', " ", substr($item->backup_name, 0, -4));
         echo '</td>';
 
         echo '<td class="text-center">';
         if ($item->backupDB) {
             echo '<i class="fa fa-check" style="color:green"></i>';
+        } else {
+            echo '<i class="fa fa-times" style="color:red"></i>';
         }
         echo '</td>';
 
         echo '<td class="text-center">';
         if ($item->backupFile) {
             echo '<i class="fa fa-check" style="color:green"></i>';
+        } else {
+            echo '<i class="fa fa-times" style="color:red"></i>';
         }
         echo '</td>';
 
         echo '<td class="text-center">';
         if ($item->upload_backup) {
             echo '<i class="fa fa-check" style="color:green"></i>';
+        }else {
+            echo '<i class="fa fa-times" style="color:red"></i>';
         }
         echo '</td>';
 
         echo '<td class="text-center">';
         if (array_key_exists('file#' . ModuleConfig::getModuleSetting('FtpPath') . '/' . $item->backup_name, $items)) {
             echo '<i class="fa fa-check" style="color:green"></i>';
+        } else {
+            echo '<i class="fa fa-times" style="color:red"></i>';
         }
         echo '</td>';
 
