@@ -120,7 +120,7 @@ try {
             $backup_file_run_time,
             $upload_backup,
             $backup_upload_run_time,
-            $backup_run_time_all,
+            microtime(true) - $backup_run_time_all_start,
             $backupArchiveFileName,
             true,
             $e
@@ -136,7 +136,7 @@ try {
         $backup_file_run_time,
         $upload_backup,
         $backup_upload_run_time,
-        $backup_run_time_all,
+        microtime(true) - $backup_run_time_all_start,
         $backupArchiveFileName,
         true,
         $e
@@ -188,7 +188,7 @@ try {
         $backup_file_run_time,
         $upload_backup,
         $backup_upload_run_time,
-        $backup_run_time_all,
+        microtime(true) - $backup_run_time_all_start,
         $backupArchiveFileName,
         true,
         $e
