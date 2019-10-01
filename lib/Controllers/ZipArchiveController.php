@@ -1,5 +1,12 @@
 <?php
 /**
+ *  Created by PhpStorm.
+ *  User: Артём
+ *  Date time: 01.10.19 14:49
+ *
+ */
+
+/**
  * Created by PhpStorm.
  * User: Артём
  * Date: 13.06.2019
@@ -8,20 +15,27 @@
 
 namespace WHMCS\Module\Addon\backupWHMCS\Controllers;
 
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use ZipArchive;
 
-class ZipArchiveController extends \ZipArchive
+class ZipArchiveController extends ZipArchive
 {
     private $logs = [];
 
     function addDir($source, $ignorePath = [])
     {
-        $files = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($source), \RecursiveIteratorIterator::SELF_FIRST);
+        $files = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($source), RecursiveIteratorIterator::SELF_FIRST);
 
         foreach ($files as $file) {
             // Ignore "." and ".." folders
             if (in_array(substr($file, strrpos($file, '/') + 1), array('.', '..')))
                 continue;
+
+            if ($file->isLink() === true) {
+                continue;
+            }
 
             $file = realpath($file);
 
