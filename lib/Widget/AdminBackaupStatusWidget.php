@@ -2,6 +2,13 @@
 /**
  *  Created by PhpStorm.
  *  User: Артём
+ *  Date time: 04.11.19 0:10
+ *
+ */
+
+/**
+ *  Created by PhpStorm.
+ *  User: Артём
  *  Date time: 04.11.19 0:08
  *
  */
@@ -93,7 +100,6 @@ class AdminBackaupStatusWidget extends AbstractWidget
      */
     public function generateOutput($data)
     {
-        $data['last_cron'] = null;
         if (!empty($data['last_cron'])) {
             if ($data['last_cron']->backupDB) {
                 $icon2 = 'fa fa fa-check fa-2x';
