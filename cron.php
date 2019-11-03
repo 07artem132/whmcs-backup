@@ -1,5 +1,12 @@
 <?php
 /**
+ *  Created by PhpStorm.
+ *  User: Артём
+ *  Date time: 04.11.19 0:08
+ *
+ */
+
+/**
  * Created by PhpStorm.
  * User: Артём
  * Date: 09.06.2019
@@ -10,7 +17,7 @@
 require __DIR__ . '/../../../init.php';
 
 ini_set('memory_limit', '2048M');
-ini_set('max_execution_time', 900);
+ini_set('max_execution_time', 60 * 50);
 
 use WHMCS\Module\Addon\backupWHMCS\Configs\ModuleConfig;
 use WHMCS\Module\Addon\backupWHMCS\Controllers\FtpClientController;
@@ -39,6 +46,10 @@ $backup_run_time_all_start = microtime(true);
 try {
     $ignorePath = explode("\r\n", ModuleConfig::getModuleSetting('IgnoreFilePaths'));
     $backupPath = ModuleConfig::getWhmcsRootDir() . '/modules/addons/' . ModuleConfig::getModuleName() . '/backaups';
+
+    foreach (glob($backupPath . '/*') as $file) {
+        unlink($file);
+    }
 
     $backupDBFileName = 'db.sql.bzip2';
     $backupArchiveFileName = date("Y-m-d_H-i-s") . '.zip';
@@ -75,7 +86,9 @@ try {
 
         if (ModuleConfig::getModuleSetting('BackupFiles') === 'on') {
             $backup_file_run_time_start = microtime(true);
-
+            //todo исправить
+            // Если пустой массив $ignorePath резервная копия не происходит
+            // Проверить исправлено ли
             $zip->addDir(ModuleConfig::getWhmcsRootDir(), $ignorePath);
 
             $backup_file_run_time = microtime(true) - $backup_file_run_time_start;
@@ -128,7 +141,7 @@ try {
         echo 'Ошибка при создании резервной копии: ' . $e->getMessage();
         die();
     }
-} catch (\Throwable $e) {
+} catch (Throwable $e) {
     LogController::cron(
         $backupDB,
         $backup_db_run_time,
@@ -180,7 +193,7 @@ try {
         $backupArchiveFileName
     );
 
-} catch (\Exception $e) {
+} catch (Exception $e) {
     LogController::cron(
         $backupDB,
         $backup_db_run_time,

@@ -1,5 +1,12 @@
 <?php
 /**
+ *  Created by PhpStorm.
+ *  User: Артём
+ *  Date time: 04.11.19 0:08
+ *
+ */
+
+/**
  * Created by PhpStorm.
  * User: Артём
  * Date: 20.06.2019
@@ -9,9 +16,10 @@
 namespace WHMCS\Module\Addon\backupWHMCS\Widget;
 
 use Carbon\Carbon;
+use WHMCS\Module\AbstractWidget;
 use WHMCS\Module\Addon\backupWHMCS\Models\BackupLogModel;
 
-class AdminBackaupStatusWidget extends \WHMCS\Module\AbstractWidget
+class AdminBackaupStatusWidget extends AbstractWidget
 {
     /**
      * @type string The title of the widget
@@ -70,7 +78,7 @@ class AdminBackaupStatusWidget extends \WHMCS\Module\AbstractWidget
     public function getData()
     {
         return array(
-            'last_cron' => BackupLogModel::where('upload_backup','=','1')->orderBy('created_at', 'desc')->first(),
+            'last_cron' => BackupLogModel::where('upload_backup', '=', '1')->orderBy('created_at', 'desc')->first(),
         );
     }
 
@@ -85,40 +93,52 @@ class AdminBackaupStatusWidget extends \WHMCS\Module\AbstractWidget
      */
     public function generateOutput($data)
     {
+        $data['last_cron'] = null;
+        if (!empty($data['last_cron'])) {
+            if ($data['last_cron']->backupDB) {
+                $icon2 = 'fa fa fa-check fa-2x';
+                $color2 = 'green';
+                $text2 = 'БД сохранена';
+            } else {
+                $icon2 = 'fa fa-times fa-2x';
+                $color2 = 'red';
+                $text2 = 'БД не сохранена';
+            }
+            $text4 = 'Резервная копия была выполнена за ' . round(($data['last_cron']->backup_run_time_all) / 60, 2) . ' минуты';
+            if ($data['last_cron']->backupFile) {
+                $icon3 = 'fa fa fa-check fa-2x';
+                $color3 = 'green';
+                $text3 = 'Файлы сохранены';
+            } else {
+                $icon3 = 'fa fa-times fa-2x';
+                $color3 = 'red';
+                $text3 = 'Файлы не сохранены';
+            }
 
-
-        if($data['last_cron']->backupDB){
-            $icon2 = 'fa fa fa-check fa-2x';
-            $color2 = 'green';
-            $text2='БД сохранена';
+            if ($data['last_cron']->created_at->diffInHours(Carbon::now()) > 24) {
+                $icon = 'fa fa-times fa-2x';
+                $text = 'Прошло более 24х часов с момента последней резервной копии.';
+                $DiffLastRunHours = $data['last_cron']->created_at->diffInHours(Carbon::create());
+                $color = 'red';
+            } else {
+                $icon = 'fa fa-check fa-2x';
+                $text = 'Прошло менее 24х часов с момента последней резервной копии.';
+                $DiffLastRunHours = $data['last_cron']->created_at->diffInHours(Carbon::create());
+                $color = 'green';
+            }
         } else {
             $icon2 = 'fa fa-times fa-2x';
             $color2 = 'red';
-            $text2='БД не сохранена';
-        }
-        $text4 = 'Резервная копия была выполнена за '.round(($data['last_cron']->backup_run_time_all)/60,2) .' минуты';
-        if($data['last_cron']->backupFile){
-            $icon3 = 'fa fa fa-check fa-2x';
-            $color3 = 'green';
-            $text3='Файлы сохранены';
-        }else {
+            $text2 = 'БД не сохранена';
             $icon3 = 'fa fa-times fa-2x';
             $color3 = 'red';
-            $text3='Файлы не сохранены';
-        }
-
-        if ($data['last_cron']->created_at->diffInHours(Carbon::now()) > 24) {
+            $text3 = 'Файлы не сохранены';
             $icon = 'fa fa-times fa-2x';
-            $text = 'Прошло более 24х часов с момента последней резервной копии.';
-            $DiffLastRunHours = $data['last_cron']->created_at->diffInHours(Carbon::create());
+            $text = 'Резервная копия ещё не выполнялась ни разу!';
+            $DiffLastRunHours = "0";
             $color = 'red';
-        } else {
-            $icon = 'fa fa-check fa-2x';
-            $text = 'Прошло менее 24х часов с момента последней резервной копии.';
-            $DiffLastRunHours = $data['last_cron']->created_at->diffInHours(Carbon::create());
-            $color = 'green';
+            $text4 = 'Резервная копия ещё не выполнялась ни разу!';
         }
-
         return <<<EOF
 <div class="widget-content-padded">
     <div >
